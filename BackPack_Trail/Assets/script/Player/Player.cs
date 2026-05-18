@@ -42,7 +42,10 @@ public class Player : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         bag = GetComponent<Player_Bag>();
 
-        PlayerPrefs.SetInt("Money", Start_Money);
+        if (PlayerPrefs.GetInt("Money",0) <= 0)
+        {
+            PlayerPrefs.SetInt("Money", Start_Money);
+        }
         PlayerPrefs.Save();
     }
     public void OnEnable()
