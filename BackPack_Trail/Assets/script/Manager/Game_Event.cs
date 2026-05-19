@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-
+[DefaultExecutionOrder(-100)]
 public class Game_Event : MonoBehaviour
 {
     public static Game_Event instance { private set; get; }
@@ -22,6 +22,7 @@ public class Game_Event : MonoBehaviour
     //通讯玩家剩余某物品数量
     public Func<Item_Data, int> Last_Item_By_ID;
     //初始化商店
+    public Trader Current_Trader;
     public event Action<bool> Init_Store;
     //刷新商店
     public event Action Refresh_Buy;
@@ -95,4 +96,8 @@ public class Game_Event : MonoBehaviour
         return Last_Item_By_ID?.Invoke(item) ?? 0;
     }
     #endregion
+    public int Get_InitStore_ListenerCount()
+    {
+        return Init_Store?.GetInvocationList().Length ?? 0;
+    }
 }

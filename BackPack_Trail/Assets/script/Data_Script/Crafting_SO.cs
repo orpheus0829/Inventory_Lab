@@ -17,6 +17,7 @@ public class Crafting_SO : ScriptableObject
         public Item_Data Product;
         public int Res_Number;
     }
+    public string Map_Name;
     public List<Crafting_Material> crafting_Materials;
     public List<Crafting_Result> crafting_Results;
 }

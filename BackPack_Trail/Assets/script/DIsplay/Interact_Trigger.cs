@@ -24,8 +24,18 @@ public class Interact_Trigger : MonoBehaviour
             {
                 pl.Can_Interact = true;
                 Interact_Button.gameObject.SetActive(true);
+                Trader targetTrader = other.GetComponent<Trader>();
+                Game_Event.instance.Current_Trader = targetTrader;
+
+                //Debug.Log($"绑定前Init_Store监听数量：{Game_Event.instance.Get_InitStore_ListenerCount()}");
+                Game_Event.instance.Init_Store -= targetTrader.OnShopOpen;
+                Game_Event.instance.Init_Store += targetTrader.OnShopOpen;
+                //Debug.Log($"绑定后Init_Store监听数量：{Game_Event.instance.Get_InitStore_ListenerCount()}");
+                //targetTrader.Reset_Shop_Init();
+                //Game_Event.instance.Refresh_Buy_List();
+                //Game_Event.instance.Refresh_Sell_List();
+                //Game_Event.instance.Init_Store_Panel(true);
             }
-            Debug.Log("进入交互范围");
         }
     }
     public void OnTriggerExit(Collider other)
@@ -36,6 +46,9 @@ public class Interact_Trigger : MonoBehaviour
             {
                 pl.Can_Interact = false;
                 Interact_Button.gameObject.SetActive(false);
+                Trader trader = other.GetComponent<Trader>();
+                Game_Event.instance.Init_Store -= trader.OnShopOpen;
+                Game_Event.instance.Current_Trader = null;
             }
         }
     }

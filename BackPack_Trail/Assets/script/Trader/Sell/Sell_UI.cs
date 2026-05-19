@@ -25,7 +25,7 @@ public class Sell_UI : MonoBehaviour
         Game_Event.instance.Refresh_Sell += Refresh_Sell_Item;
 
         Refresh_Sell_Item();
-        Game_Event.instance.Init_Store_Panel(true);
+        //Game_Event.instance.Init_Store_Panel(true);
     }
     public void OnDisable()
     {

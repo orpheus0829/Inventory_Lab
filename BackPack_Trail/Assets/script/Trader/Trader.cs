@@ -14,7 +14,7 @@ public class Trader : MonoBehaviour
         {
             Supply_Divide.Add(a, 0);
         }
-        Game_Event.instance.Init_Store += OnShopOpen;
+        Game_Event.instance.Init_Store -= OnShopOpen;
 
         foreach (var b in SO.Can_Sell_List)
         {
@@ -53,6 +53,10 @@ public class Trader : MonoBehaviour
                 Supply_Divide[item]++;
             }
         }
+        if(Game_Event.instance.Current_Trader != this)
+        {
+            return;
+        }
         foreach(var i in Supply_Divide)
         {
             //Debug.Log("已分配给" + i.Key + "物品" + i.Value + "个出售数量");
@@ -88,6 +92,10 @@ public class Trader : MonoBehaviour
                 Sold_Divide[item]++;
             }
         }
+        if (Game_Event.instance.Current_Trader != this)
+        {
+            return;
+        }
         foreach (var i in Sold_Divide)
         {
             //Debug.Log("已分配给" + i.Key + "物品" + i.Value + "个出售数量");
@@ -101,29 +109,47 @@ public class Trader : MonoBehaviour
         {
             return;
         }
-        Random_Divide_S();
-        if (already_Init)
+        if (Game_Event.instance.Current_Trader != this)
         {
             return;
         }
+        Random_Divide_S();
+        //if (already_Init)
+        //{
+        //    return;
+        //}
         if (isOpen)
         {
             Random_Divide();
             already_Init = true;
         }
     }
+    public void Reset_Shop_Init()
+    {
+        already_Init = false;
+    }
     public void Refresh_B()
     {
+        if (Game_Event.instance.Current_Trader != this)
+        {
+            return;
+        }
         Game_Event.instance.Refresh_Buy_List();
         Reset_Supply();
-        already_Init = false;
-        OnShopOpen(true);
+        //already_Init = false;
+        //OnShopOpen(true);
+        Random_Divide();
     }
     public void Refresh_BS()
     {
+        if (Game_Event.instance.Current_Trader != this)
+        {
+            return;
+        }
         Game_Event.instance.Refresh_Sell_List();
         Reset_Sold();
-        already_Init = false;
-        OnShopOpen(true);
+        //already_Init = false;
+        //OnShopOpen(true);
+        Random_Divide_S();
     }
 }

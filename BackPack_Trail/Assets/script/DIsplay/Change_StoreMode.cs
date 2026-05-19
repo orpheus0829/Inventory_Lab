@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,7 +18,17 @@ public class Change_StoreMode : MonoBehaviour
     }
     public void Click_Chnage()
     {
-        Buy.SetActive(Sell.activeSelf);
-        Sell.SetActive(!Sell.activeSelf);
+        if (Buy.activeSelf && !Sell.activeSelf)
+        {
+            Buy.SetActive(false);
+            Sell.SetActive(true);
+            Game_Event.instance.Current_Trader.Refresh_BS();
+        }
+        else if(Sell.activeSelf && !Buy.activeSelf)
+        {
+            Sell.SetActive(false);
+            Buy.SetActive(true);
+            Game_Event.instance.Current_Trader.Refresh_B();
+        }
     }
 }

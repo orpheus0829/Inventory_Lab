@@ -6,11 +6,11 @@ using UnityEngine;
 public class Trader_SO : ScriptableObject
 {
     [Header("供货数量")]
-    [Range(1, 20)] public int CanBuy_Count;
+    [Range(1, 100)] public int CanBuy_Count;
     [Header("可提供")]
     public List<Item_Data> Can_Buy_List;
     [Header("收购数量")]
-    [Range(1, 20)] public int CanSell_Count;
+    [Range(1, 100)] public int CanSell_Count;
     [Header("可收购")]
     public List<Item_Data> Can_Sell_List;
     [Space]

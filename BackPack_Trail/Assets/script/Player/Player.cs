@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using Cursor = UnityEngine.Cursor;
 
 public class Player : MonoBehaviour
 {
@@ -90,6 +91,7 @@ public class Player : MonoBehaviour
         {
             if (!Bag_Panel.activeSelf)
             {
+                Cursor.lockState = CursorLockMode.None;
                 Bag_Panel.SetActive(true);
                 Introduction_Mrg.instance.gameObject.SetActive(false);
                 bag.Load_Data("Bag_Data");
@@ -98,6 +100,7 @@ public class Player : MonoBehaviour
             }
             else
             {
+                Cursor.lockState = CursorLockMode.Locked;
                 bag.Save_Bag("Bag_Data");
                 bag.ReClean_Bag_Display();
                 Bag_Panel.SetActive(false);
@@ -130,13 +133,19 @@ public class Player : MonoBehaviour
         {
             if (!Trader_Panel.activeSelf)
             {
+                Cursor.lockState = CursorLockMode.None;
                 Trader_Panel.gameObject.SetActive(true);
                 Buy_Panel.SetActive(true);
                 Sell_Panel.SetActive(false);
+
+                Game_Event.instance.Refresh_Buy_List();
+                Game_Event.instance.Refresh_Sell_List();
                 Game_Event.instance.Init_Store_Panel(true);
+                //Game_Event.instance.Current_Trader.Refresh_B();
             }
             else
             {
+                Cursor.lockState = CursorLockMode.Locked;
                 Trader_Panel.gameObject.SetActive(false);
                 Buy_Panel.SetActive(false);
                 Sell_Panel.SetActive(false);
