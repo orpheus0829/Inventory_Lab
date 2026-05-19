@@ -27,6 +27,8 @@ public class Game_Event : MonoBehaviour
     //刷新商店
     public event Action Refresh_Buy;
     public event Action Refresh_Sell;
+    //生成合成按钮
+    public event Action<Crafting_SO> Spawn_Crafting_Button;
     public void Awake()
     {
         if (instance != null && instance != this)
@@ -94,6 +96,12 @@ public class Game_Event : MonoBehaviour
     public int Last_Item_For_Sell(Item_Data item)
     {
         return Last_Item_By_ID?.Invoke(item) ?? 0;
+    }
+    #endregion
+    #region 生成制作按钮
+    public void Spawn_Craft_Button(Crafting_SO craft)
+    {
+        Spawn_Crafting_Button?.Invoke(craft);
     }
     #endregion
     public int Get_InitStore_ListenerCount()
