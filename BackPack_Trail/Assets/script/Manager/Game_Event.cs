@@ -28,7 +28,13 @@ public class Game_Event : MonoBehaviour
     public event Action Refresh_Buy;
     public event Action Refresh_Sell;
     //生成合成按钮
-    public event Action<Crafting_SO> Spawn_Crafting_Button;
+    public event Action<Crafting_SO,int> Spawn_Crafting_Button;
+    //检查玩家是否符合合成条件
+    public Func<Crafting_SO,bool> Craft_Check;
+    //开始合成
+    public event Action<Crafting_SO> Crafting_Start;
+    //生成合成列表
+    public event Action Init_Craft;
     public void Awake()
     {
         if (instance != null && instance != this)
@@ -98,10 +104,22 @@ public class Game_Event : MonoBehaviour
         return Last_Item_By_ID?.Invoke(item) ?? 0;
     }
     #endregion
-    #region 生成制作按钮
-    public void Spawn_Craft_Button(Crafting_SO craft)
+    #region 制作
+    public void Spawn_Craft_Button(Crafting_SO craft,int index)
     {
-        Spawn_Crafting_Button?.Invoke(craft);
+        Spawn_Crafting_Button?.Invoke(craft,index);
+    }
+    public bool Craft_Process_Check(Crafting_SO craft)
+    {
+        return Craft_Check?.Invoke(craft) ?? false;
+    }
+    public void Craft_Start(Crafting_SO craft)
+    {
+        Crafting_Start?.Invoke(craft);
+    }
+    public void Init_Crafting()
+    {
+        Init_Craft?.Invoke();
     }
     #endregion
     public int Get_InitStore_ListenerCount()

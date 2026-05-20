@@ -36,6 +36,9 @@ public class Player : MonoBehaviour
     public GameObject Buy_Panel;
     public GameObject Sell_Panel;
 
+    [Header("ºÏ³É")]
+    public GameObject Craft_Panel;
+
     public void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -87,7 +90,7 @@ public class Player : MonoBehaviour
     }
     public void OnBackPack(InputValue value)
     {
-        if (value.isPressed && !Trader_Panel.activeSelf)
+        if (value.isPressed && !Trader_Panel.activeSelf && !Craft_Panel.activeSelf)
         {
             if (!Bag_Panel.activeSelf)
             {
@@ -125,6 +128,23 @@ public class Player : MonoBehaviour
             bag.currentDraggingItem.Throw_Item();
             bag.ReClean_Bag_Display();
             bag.Refresh_Bag_Display();
+        }
+    }
+    public void OnCraft(InputValue value)
+    {
+        if (value.isPressed && !Trader_Panel.activeSelf && !Bag_Panel.activeSelf)
+        {
+            if (!Craft_Panel.activeSelf)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Craft_Panel.SetActive(true);
+                Game_Event.instance.Init_Crafting();
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Craft_Panel.SetActive(false);
+            }
         }
     }
     public void OnInteract(InputValue value)

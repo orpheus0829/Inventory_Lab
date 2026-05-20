@@ -74,6 +74,9 @@ public class Player_Bag : MonoBehaviour
         Game_Event.instance.Sell_Item += Sell_Good;
         Game_Event.instance.Last_Item_By_ID += Search_By_ID;
         Game_Event.instance.Remove_Sold_Good += Remove_Because_Sold;
+
+        Game_Event.instance.Craft_Check += Craft_Need;
+        Game_Event.instance.Crafting_Start += Craft_Add;
     }
     public void OnEnable()
     {
@@ -85,6 +88,9 @@ public class Player_Bag : MonoBehaviour
         Game_Event.instance.Sell_Item -= Sell_Good;
         Game_Event.instance.Last_Item_By_ID -= Search_By_ID;
         Game_Event.instance.Remove_Sold_Good -= Remove_Because_Sold;
+
+        Game_Event.instance.Craft_Check -= Craft_Need;
+        Game_Event.instance.Crafting_Start -= Craft_Add;
     }
     #region 查询剩余某物品
     public int Search_By_ID(Item_Data item)
@@ -152,6 +158,119 @@ public class Player_Bag : MonoBehaviour
         {
             Game_Event.instance.Send_Real_SellItem(false);
         }
+    }
+    #endregion
+    #region 合成
+    public bool Craft_Need(Crafting_SO craft)
+    {
+        Init_Resort_List();
+        foreach (var matItem in craft.crafting_Materials)
+        {
+            int haveNum = Search_By_ID(matItem.Material);
+            if (haveNum < matItem.Number)
+            {
+                Debug.Log("材料不足:" + matItem.Material.item_name + "需" + matItem.Number + "个，仅有" + haveNum + "个");
+                return false;
+            }
+        }
+        List<Bag_SingleSlot> slotBackup = new List<Bag_SingleSlot>();
+        List<Vector2Int> clearPosList = new List<Vector2Int>();
+
+        foreach (var matItem in craft.crafting_Materials)
+        {
+            int needFind = matItem.Number;
+            for (int y = 0; y < Bag_Row && needFind > 0; y++)
+            {
+                for (int x = 0; x < Bag_Col && needFind > 0; x++)
+                {
+                    Bag_SingleSlot slot = bag[y, x];
+                    if (slot.Have_Item && slot.Start_x == x && slot.Start_y == y)
+                    {
+                        Item_Data curItem = allData_Item.Data_List.Find(d => d.item_id == slot.item_ID);
+                        if (curItem == matItem.Material)
+                        {
+                            for (int yy = y; yy < y + curItem.Height; yy++)
+                            {
+                                for (int xx = x; xx < x + curItem.Width; xx++)
+                                {
+                                    slotBackup.Add(bag[yy, xx]);
+                                    clearPosList.Add(new Vector2Int(xx, yy));
+                                    bag[yy, xx].Have_Item = false;
+                                    bag[yy, xx].item_ID = 0;
+                                }
+                            }
+                            needFind--;
+                        }
+                    }
+                }
+            }
+        }
+        bool canAllPlace = true;
+        List<Item_Data> tempProductList = new List<Item_Data>();
+        foreach (var res in craft.crafting_Results)
+        {
+            for (int i = 0; i < res.Res_Number; i++)
+            {
+                tempProductList.Add(res.Product);
+            }
+        }
+        foreach (var product in tempProductList)
+        {
+            Find_Empty_Location(product.Height, product.Width, out int px, out int py);
+            if (px == -1 && py == -1)
+            {
+                canAllPlace = false;
+                break;
+            }
+        }
+        for (int i = 0; i < clearPosList.Count; i++)
+        {
+            Vector2Int pos = clearPosList[i];
+            bag[pos.y, pos.x] = slotBackup[i];
+        }
+        if (!canAllPlace)
+        {
+            Debug.Log("材料足够，但腾空后背包空间放不下合成产物");
+            return false;
+        }
+
+        Debug.Log("材料充足且空间充足，可以合成");
+        return true;
+    }
+    public void Craft_Add(Crafting_SO craft)
+    {
+        foreach (var mat in craft.crafting_Materials)
+        {
+            int needRemove = mat.Number;
+            for (int y = 0; y < Bag_Row && needRemove > 0; y++)
+            {
+                for (int x = 0; x < Bag_Col && needRemove > 0; x++)
+                {
+                    var slot = bag[y, x];
+                    if (slot.Have_Item && slot.Start_x == x && slot.Start_y == y)
+                    {
+                        Item_Data item = allData_Item.Data_List.Find(i => i.item_id == slot.item_ID);
+                        if (item == mat.Material)
+                        {
+                            RemoveItem(x, y, item.Width, item.Height);
+                            needRemove--;
+                        }
+                    }
+                }
+            }
+        }
+        foreach (var res in craft.crafting_Results)
+        {
+            for (int i = 0; i < res.Res_Number; i++)
+            {
+                Pick_Up(res.Product);
+            }
+        }
+        ReClean_Bag_Display();
+        Refresh_Bag_Display();
+        Init_Resort_List();
+        Save_Bag(path);
+        Debug.Log("合成完成");
     }
     #endregion
     public void Init_Bag()
