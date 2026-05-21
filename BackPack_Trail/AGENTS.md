@@ -2,7 +2,7 @@
 - Project name: BackPack_Trail
 - Unity version: Unity 2022.3.62f3c1
 - Active game object:
-  - Name: 295.joint_RightF_1_1
+  - Name: Interact_Button
   - Tag: Untagged
-  - Layer: Default
+  - Layer: UI
 <!-- UNITY CODE ASSIST INSTRUCTIONS END -->

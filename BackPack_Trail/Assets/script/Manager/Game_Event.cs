@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 [DefaultExecutionOrder(-100)]
-public class Game_Event : MonoBehaviour
+public class Game_Event : Base_mgr<Game_Event>
 {
-    public static Game_Event instance { private set; get; }
     //刷新玩家金币数
     public event Action<int> Player_Coin;
     //商店买卖
@@ -35,14 +34,9 @@ public class Game_Event : MonoBehaviour
     public event Action<Crafting_SO> Crafting_Start;
     //生成合成列表
     public event Action Init_Craft;
-    public void Awake()
+    protected override void Awake()
     {
-        if (instance != null && instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        instance = this;
+        base.Awake();
     }
     #region 商店买卖
     public void Send_BuyItem(Item_Data item_Data)

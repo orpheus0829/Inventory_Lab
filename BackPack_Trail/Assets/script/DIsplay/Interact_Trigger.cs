@@ -6,7 +6,6 @@ public class Interact_Trigger : MonoBehaviour
 {
     public Player pl;
     public SphereCollider sc;
-    public GameObject Interact_Button;
     [Header("可交互商人列表")]
     public List<Trader> interactableTraders = new List<Trader>();
     [Header("我的位置")]
@@ -18,9 +17,9 @@ public class Interact_Trigger : MonoBehaviour
         pl = GetComponentInParent<Player>();
         playerTrans = pl.transform;
 
-        if (Interact_Button.activeSelf)
+        if (Panel_Mgr.instance.IsPanelVisible(Panel_Mgr.instance.InteractPanel))
         {
-            Interact_Button.SetActive(false);
+            Panel_Mgr.instance.Control_InteractPanel(false);
         }
     }
     public void Update()
@@ -28,6 +27,10 @@ public class Interact_Trigger : MonoBehaviour
         if (pl.InputMove != Vector3.zero)
         {
             Refresh_Interact_State();
+        }
+        if (interactableTraders.Count <= 0)
+        {
+            Panel_Mgr.instance.TraderPanel?.HidePanel();
         }
     }
     private void OnTriggerEnter(Collider other)
@@ -76,12 +79,12 @@ public class Interact_Trigger : MonoBehaviour
             Game_Event.instance.Init_Store -= nearest.OnShopOpen;
             Game_Event.instance.Init_Store += nearest.OnShopOpen;
             pl.Can_Interact = true;
-            Interact_Button.SetActive(true);
+            Panel_Mgr.instance.Control_InteractPanel(true);
         }
         else
         {
             pl.Can_Interact = false;
-            Interact_Button.SetActive(false);
+            Panel_Mgr.instance.Control_InteractPanel(false);
             Game_Event.instance.Current_Trader = null;
         }
     }

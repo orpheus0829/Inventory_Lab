@@ -13,7 +13,6 @@ public class Player : MonoBehaviour
     public int Start_Money;
 
     [Header("背包")]
-    public GameObject Bag_Panel;
     public Player_Bag bag;
 
     [Header("相机")]
@@ -32,12 +31,8 @@ public class Player : MonoBehaviour
 
     [Header("交互")]
     public bool Can_Interact;
-    public GameObject Trader_Panel;
-    public GameObject Buy_Panel;
-    public GameObject Sell_Panel;
 
-    [Header("合成")]
-    public GameObject Craft_Panel;
+    //[Header("合成")]
 
     public void Awake()
     {
@@ -90,12 +85,12 @@ public class Player : MonoBehaviour
     }
     public void OnBackPack(InputValue value)
     {
-        if (value.isPressed && !Trader_Panel.activeSelf && !Craft_Panel.activeSelf)
+        if (value.isPressed && !Panel_Mgr.instance.IsPanelVisible(Panel_Mgr.instance.TraderPanel) && !Panel_Mgr.instance.IsPanelVisible(Panel_Mgr.instance.CraftPanel))
         {
-            if (!Bag_Panel.activeSelf)
+            if (!Panel_Mgr.instance.IsPanelVisible(Panel_Mgr.instance.BagPanel))
             {
                 Cursor.lockState = CursorLockMode.None;
-                Bag_Panel.SetActive(true);
+                Panel_Mgr.instance.OpenPanel(Panel_Mgr.instance.BagPanel);
                 Introduction_Mrg.instance.gameObject.SetActive(false);
                 bag.Load_Data("Bag_Data");
                 bag.ReClean_Bag_Display();
@@ -106,7 +101,8 @@ public class Player : MonoBehaviour
                 Cursor.lockState = CursorLockMode.Locked;
                 bag.Save_Bag("Bag_Data");
                 bag.ReClean_Bag_Display();
-                Bag_Panel.SetActive(false);
+                //Bag_Panel.SetActive(false);
+                Panel_Mgr.instance.HideAllPanel();
             }
         }
     }
@@ -132,31 +128,29 @@ public class Player : MonoBehaviour
     }
     public void OnCraft(InputValue value)
     {
-        if (value.isPressed && !Trader_Panel.activeSelf && !Bag_Panel.activeSelf)
+        if (value.isPressed && !Panel_Mgr.instance.IsPanelVisible(Panel_Mgr.instance.TraderPanel) && !Panel_Mgr.instance.IsPanelVisible(Panel_Mgr.instance.BagPanel))
         {
-            if (!Craft_Panel.activeSelf)
+            if (!Panel_Mgr.instance.IsPanelVisible(Panel_Mgr.instance.CraftPanel))
             {
                 Cursor.lockState = CursorLockMode.None;
-                Craft_Panel.SetActive(true);
+                Panel_Mgr.instance.OpenPanel(Panel_Mgr.instance.CraftPanel);
                 Game_Event.instance.Init_Crafting();
             }
             else
             {
                 Cursor.lockState = CursorLockMode.Locked;
-                Craft_Panel.SetActive(false);
+                Panel_Mgr.instance.HideAllPanel();
             }
         }
     }
     public void OnInteract(InputValue value)
     {
-        if (value.isPressed && Can_Interact && !Bag_Panel.activeSelf)
+        if (value.isPressed && Can_Interact && !Panel_Mgr.instance.IsPanelVisible(Panel_Mgr.instance.BagPanel))
         {
-            if (!Trader_Panel.activeSelf)
+            if (!Panel_Mgr.instance.IsPanelVisible(Panel_Mgr.instance.TraderPanel))
             {
                 Cursor.lockState = CursorLockMode.None;
-                Trader_Panel.gameObject.SetActive(true);
-                Buy_Panel.SetActive(true);
-                Sell_Panel.SetActive(false);
+                Panel_Mgr.instance.OpenTraderBuyPanel();
 
                 Game_Event.instance.Refresh_Buy_List();
                 Game_Event.instance.Refresh_Sell_List();
@@ -166,9 +160,7 @@ public class Player : MonoBehaviour
             else
             {
                 Cursor.lockState = CursorLockMode.Locked;
-                Trader_Panel.gameObject.SetActive(false);
-                Buy_Panel.SetActive(false);
-                Sell_Panel.SetActive(false);
+                Panel_Mgr.instance.HideAllPanel();
             }
         }
     }
@@ -192,6 +184,6 @@ public class Player : MonoBehaviour
     }
     public void Set_StorePanel(bool Is_Ready)
     {
-        Trader_Panel.SetActive(Is_Ready);
+        Panel_Mgr.instance.TraderPanel.gameObject.SetActive(Is_Ready);
     }
 }
